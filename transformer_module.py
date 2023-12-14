@@ -42,7 +42,7 @@ class MultiHeadAttention(nn.Module):
 
     def attention(q, k, v, d_k, mask=None, dropout=None):
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
-        # 掩盖掉那些为了填补长度增加的单元，使其通过 softmax 计算后为 0
+        
         if mask is not None:
             mask = mask.unsqueeze(1)
             scores = scores.masked_fill(mask == 0, -1e9)
@@ -58,7 +58,7 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, q, k, v, mask=None):
         bs = q.size(0)
-        # 进行线性操作划分为成h个头
+        
         k = self.k_linear(k).view(bs, -1, self.h, self.d_k)
         q = self.q_linear(q).view(bs, -1, self.h, self.d_k)
         v = self.v_linear(v).view(bs, -1, self.h, self.d_k)
